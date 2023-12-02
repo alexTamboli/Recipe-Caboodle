@@ -121,7 +121,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.CustomUser'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -147,7 +147,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Mesob Recipe API',
+    'TITLE': 'Recipe Caboodle API',
     'DESCRIPTION': 'A recipe sharing platform built using DRF',
     'VERSION': '1.0.0',
 }
