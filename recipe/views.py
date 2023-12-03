@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .models import Recipe, RecipeLike
 from .serializers import RecipeLikeSerializer, RecipeSerializer
-# from .permissions import IsAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 
 class RecipeListAPIView(generics.ListAPIView):
     """
@@ -15,3 +15,12 @@ class RecipeListAPIView(generics.ListAPIView):
     serializer_class = RecipeSerializer
     permission_classes = (AllowAny,)
     filterset_fields = ('category__name', 'author__username')
+    
+    
+class RecipeAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Get, Update, Delete a recipe
+    """
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    permission_classes = (IsAuthorOrReadOnly,)
