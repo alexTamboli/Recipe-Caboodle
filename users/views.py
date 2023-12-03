@@ -21,3 +21,15 @@ class UserAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+    
+
+class UserProfileAPIView(RetrieveUpdateAPIView):
+    """
+    Get, Update user profile
+    """
+    queryset = Profile.objects.all()
+    serializer_class = serializers.ProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user.profile
