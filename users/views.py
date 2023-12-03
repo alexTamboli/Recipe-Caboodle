@@ -11,7 +11,66 @@ from .models import Profile
 from recipe.serializers import RecipeSerializer
 from . import serializers
 
+
 User = get_user_model()
+
+
+class UserRegisterationAPIView(GenericAPIView):
+    """
+    An endpoint for the client to create a new User. 
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.UserRegisterationSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        token = RefreshToken.for_user(user)
+        data = serializer.data
+        data['tokens'] = {
+            'refresh': str(token),
+            'access': str(token.access_token)
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+class UserLoginAPIView(GenericAPIView):
+    """
+    An endpoint to authenticate existing users using their email and password.
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.UserLoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+        serializer = serializers.CustomUserSerializer(user)
+        token = RefreshToken.for_user(user)
+        data = serializer.data
+        data['tokens'] = {
+            'refresh': str(token),
+            'access': str(token.access_token)
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class UserLogoutAPIView(GenericAPIView):
+    """
+    An endpoint to logout users.
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserAPIView(RetrieveUpdateAPIView):
     """
@@ -22,7 +81,7 @@ class UserAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
-    
+
 
 class UserProfileAPIView(RetrieveUpdateAPIView):
     """
@@ -34,8 +93,8 @@ class UserProfileAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.profile
-    
-    
+
+
 class UserAvatarAPIView(RetrieveUpdateAPIView):
     """
     Get, Update user avatar
@@ -46,8 +105,8 @@ class UserAvatarAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.profile
-    
-    
+
+
 class UserBookmarkAPIView(ListCreateAPIView):
     """
     Get, Create, Delete favorite recipe
@@ -78,3 +137,14 @@ class UserBookmarkAPIView(ListCreateAPIView):
             user_profile.bookmarks.remove(recipe)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordChangeAPIView(UpdateAPIView):
+    """
+    Change password view for authenticated user
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.PasswordChangeSerializer
+
+    def get_object(self):
+        return self.request.user
