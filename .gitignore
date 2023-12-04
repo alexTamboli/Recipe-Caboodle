@@ -160,3 +160,6 @@ cython_debug/
 #custom
 static/
 staticfiles_build/
+.pytest_cache
+__pycache__/
+.pyc
