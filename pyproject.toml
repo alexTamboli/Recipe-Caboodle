@@ -21,6 +21,7 @@ pillow = "^10.1.0"
 factory-boy = "^3.3.0"
 django-cloudinary-storage = "^0.3.0"
 cloudinary = "^1.37.0"
+gunicorn = "^21.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
