@@ -1,7 +1,7 @@
 from .base import *
 
-DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', '.vercel.app', '.now.sh']
+DEBUG = False
+ALLOWED_HOSTS = ['recipe-caboodle-backend-server.onrender.com']
 
 INSTALLED_APPS += [
     'cloudinary_storage',
