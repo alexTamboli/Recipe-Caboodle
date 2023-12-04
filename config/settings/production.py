@@ -1,11 +1,7 @@
-# Not complete
-
 from .base import *
-# import django_heroku
-
 
 DEBUG = False
-ALLOWED_HOSTS = ['[todo].com']
+ALLOWED_HOSTS = ['*.vercel.app']
 
 INSTALLED_APPS += [
     'cloudinary_storage',
@@ -22,5 +18,3 @@ CLOUDINARY_STORAGE = {
     'API_KEY': config('CLOUDINARY_API_SECRET'),
     'API_SECRET': config('CLOUDINARY_API_KEY')
 }
-
-# django_heroku.settings(locals())
