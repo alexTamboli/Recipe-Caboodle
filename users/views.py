@@ -32,7 +32,16 @@ class UserRegisterationAPIView(GenericAPIView):
             'refresh': str(token),
             'access': str(token.access_token)
         }
-        return Response(data, status=status.HTTP_201_CREATED)
+
+        # return Response(data, status=status.HTTP_200_OK)
+        
+        response = Response(data, status=status.HTTP_201_CREATED)
+        
+        # Set cookies in the response
+        response.set_cookie(key='refresh_token', value=str(token), httponly=True)
+        response.set_cookie(key='access_token', value=str(token.access_token), httponly=True)
+
+        return response
 
 
 class UserLoginAPIView(GenericAPIView):
@@ -53,7 +62,15 @@ class UserLoginAPIView(GenericAPIView):
             'refresh': str(token),
             'access': str(token.access_token)
         }
-        return Response(data, status=status.HTTP_200_OK)
+        # return Response(data, status=status.HTTP_200_OK)
+        
+        response = Response(data, status=status.HTTP_201_CREATED)
+        
+        # Set cookies in the response
+        response.set_cookie(key='refresh_token', value=str(token), httponly=True)
+        response.set_cookie(key='access_token', value=str(token.access_token), httponly=True)
+
+        return response
 
 
 class UserLogoutAPIView(GenericAPIView):
@@ -78,8 +95,13 @@ class UserAPIView(RetrieveUpdateAPIView):
     """
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CustomUserSerializer
-
+    
+    
     def get_object(self):
+        print(self.request.COOKIES['refresh_token'])
+        print(self.request.COOKIES['access_token'])
+        
+        print(self.request.user)
         return self.request.user
 
 
