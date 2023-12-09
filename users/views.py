@@ -25,22 +25,31 @@ class UserRegisterationAPIView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        user = serializer.validated_data
+        serializer = serializers.CustomUserSerializer(user)
+        
         token = RefreshToken.for_user(user)
+        refresh_token = str(token)
+        access_token = str(token.access_token)
         data = serializer.data
         data['tokens'] = {
-            'refresh': str(token),
-            'access': str(token.access_token)
+            'refresh': refresh_token,
+            'access': access_token
         }
-
-        # return Response(data, status=status.HTTP_200_OK)
-        
         response = Response(data, status=status.HTTP_201_CREATED)
         
         # Set cookies in the response
-        response.set_cookie(key='refresh_token', value=str(token), httponly=True)
-        response.set_cookie(key='access_token', value=str(token.access_token), httponly=True)
-
+        response.set_cookie(key='refresh_token', 
+                            value=refresh_token, 
+                            httponly=True, 
+                            secure=True, 
+                            samesite='Lax')
+        response.set_cookie(key='access_token', 
+                            value=access_token, 
+                            httponly=True, 
+                            secure=True, 
+                            samesite='Lax')
+        
         return response
 
 
@@ -56,20 +65,29 @@ class UserLoginAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
         serializer = serializers.CustomUserSerializer(user)
+        
         token = RefreshToken.for_user(user)
+        refresh_token = str(token)
+        access_token = str(token.access_token)
         data = serializer.data
         data['tokens'] = {
-            'refresh': str(token),
-            'access': str(token.access_token)
+            'refresh': refresh_token,
+            'access': access_token
         }
-        # return Response(data, status=status.HTTP_200_OK)
-        
         response = Response(data, status=status.HTTP_201_CREATED)
         
         # Set cookies in the response
-        response.set_cookie(key='refresh_token', value=str(token), httponly=True)
-        response.set_cookie(key='access_token', value=str(token.access_token), httponly=True)
-
+        response.set_cookie(key='refresh_token', 
+                            value=refresh_token, 
+                            httponly=True, 
+                            secure=True, 
+                            samesite='Lax')
+        response.set_cookie(key='access_token', 
+                            value=access_token, 
+                            httponly=True, 
+                            secure=True, 
+                            samesite='Lax')
+        
         return response
 
 
@@ -78,12 +96,14 @@ class UserLogoutAPIView(GenericAPIView):
     An endpoint to logout users.
     """
     permission_classes = (IsAuthenticated,)
+    serializer_class = []
 
     def post(self, request, *args, **kwargs):
         try:
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
-            token.blacklist()
+            if not token.blacklisted:
+                token.blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -96,12 +116,7 @@ class UserAPIView(RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CustomUserSerializer
     
-    
     def get_object(self):
-        print(self.request.COOKIES['refresh_token'])
-        print(self.request.COOKIES['access_token'])
-        
-        print(self.request.user)
         return self.request.user
 
 
