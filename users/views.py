@@ -10,7 +10,6 @@ from recipe.models import Recipe
 from .models import Profile
 from recipe.serializers import RecipeSerializer
 from . import serializers
-from .permissions import IsCustomAuthenticated
 
 
 User = get_user_model()
@@ -27,31 +26,13 @@ class UserRegisterationAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        
         token = RefreshToken.for_user(user)
-        refresh_token = str(token)
-        access_token = str(token.access_token)
-        
         data = serializer.data
         data['tokens'] = {
-            'refresh': refresh_token,
-            'access': access_token
+            'refresh': str(token),
+            'access': str(token.access_token)
         }
-        response = Response(data, status=status.HTTP_201_CREATED)
-        
-        # Set cookies in the response
-        response.set_cookie(key='refresh_token', 
-                            value=refresh_token, 
-                            httponly=True, 
-                            secure=True, 
-                            samesite='Lax')
-        response.set_cookie(key='access_token', 
-                            value=access_token, 
-                            httponly=True, 
-                            secure=True, 
-                            samesite='Lax')
-        
-        return response
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class UserLoginAPIView(GenericAPIView):
@@ -66,46 +47,26 @@ class UserLoginAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
         serializer = serializers.CustomUserSerializer(user)
-        
         token = RefreshToken.for_user(user)
-        refresh_token = str(token)
-        access_token = str(token.access_token)
-        
         data = serializer.data
         data['tokens'] = {
-            'refresh': refresh_token,
-            'access': access_token
+            'refresh': str(token),
+            'access': str(token.access_token)
         }
-        response = Response(data, status=status.HTTP_201_CREATED)
-        
-        # Set cookies in the response
-        response.set_cookie(key='refresh_token', 
-                            value=refresh_token, 
-                            httponly=True, 
-                            secure=True, 
-                            samesite='Lax')
-        response.set_cookie(key='access_token', 
-                            value=access_token, 
-                            httponly=True, 
-                            secure=True, 
-                            samesite='Lax')
-        
-        return response
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class UserLogoutAPIView(GenericAPIView):
     """
     An endpoint to logout users.
     """
-    permission_classes = (IsCustomAuthenticated,)
-    serializer_class = []
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         try:
             refresh_token = request.data["refresh"]
             token = RefreshToken(refresh_token)
-            if not token.blacklisted:
-                token.blacklist()
+            token.blacklist()
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -115,9 +76,9 @@ class UserAPIView(RetrieveUpdateAPIView):
     """
     Get, Update user information
     """
-    permission_classes = (IsCustomAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CustomUserSerializer
-    
+
     def get_object(self):
         return self.request.user
 
@@ -128,7 +89,7 @@ class UserProfileAPIView(RetrieveUpdateAPIView):
     """
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
-    permission_classes = (IsCustomAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return self.request.user.profile
@@ -140,7 +101,7 @@ class UserAvatarAPIView(RetrieveUpdateAPIView):
     """
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileAvatarSerializer
-    permission_classes = (IsCustomAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return self.request.user.profile
@@ -151,7 +112,7 @@ class UserBookmarkAPIView(ListCreateAPIView):
     Get, Create, Delete favorite recipe
     """
     serializer_class = RecipeSerializer
-    permission_classes = (IsCustomAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     profile = Profile.objects.all()
 
     def get_queryset(self):
@@ -182,7 +143,7 @@ class PasswordChangeAPIView(UpdateAPIView):
     """
     Change password view for authenticated user
     """
-    permission_classes = (IsCustomAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.PasswordChangeSerializer
 
     def get_object(self):
