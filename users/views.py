@@ -10,6 +10,7 @@ from recipe.models import Recipe
 from .models import Profile
 from recipe.serializers import RecipeSerializer
 from . import serializers
+from .permissions import IsCustomAuthenticated
 
 
 User = get_user_model()
@@ -96,7 +97,7 @@ class UserLogoutAPIView(GenericAPIView):
     """
     An endpoint to logout users.
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomAuthenticated,)
     serializer_class = []
 
     def post(self, request, *args, **kwargs):
@@ -114,7 +115,7 @@ class UserAPIView(RetrieveUpdateAPIView):
     """
     Get, Update user information
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomAuthenticated,)
     serializer_class = serializers.CustomUserSerializer
     
     def get_object(self):
@@ -127,7 +128,7 @@ class UserProfileAPIView(RetrieveUpdateAPIView):
     """
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomAuthenticated,)
 
     def get_object(self):
         return self.request.user.profile
@@ -139,7 +140,7 @@ class UserAvatarAPIView(RetrieveUpdateAPIView):
     """
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileAvatarSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomAuthenticated,)
 
     def get_object(self):
         return self.request.user.profile
@@ -150,7 +151,7 @@ class UserBookmarkAPIView(ListCreateAPIView):
     Get, Create, Delete favorite recipe
     """
     serializer_class = RecipeSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomAuthenticated,)
     profile = Profile.objects.all()
 
     def get_queryset(self):
@@ -181,7 +182,7 @@ class PasswordChangeAPIView(UpdateAPIView):
     """
     Change password view for authenticated user
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsCustomAuthenticated,)
     serializer_class = serializers.PasswordChangeSerializer
 
     def get_object(self):
