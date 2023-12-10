@@ -3,14 +3,14 @@ from .base import *
 DEBUG = False
 ALLOWED_HOSTS = ['recipe-caboodle-backend-server.onrender.com']
 
-# CORS_ALLOWED_ORIGINS = [
-#     "https://recipe-caboodle-backend-server.onrender.com",
-# ]
 
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://yourfrontenddomain.com",
+]
 
-CORS_ALLOW_All_ORIGINS = True
-
+CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS += [
     'cloudinary_storage',
