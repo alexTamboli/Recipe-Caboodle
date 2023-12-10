@@ -7,10 +7,16 @@ class IsCustomAuthenticated(BasePermission):
     """
     
     def has_permission(self, request, view):
+        try:
+            user_exists = bool(request.user and request.user.is_authenticated)
+        except Exception as e:
+            print("Error with user:", e)
+        
+        print(request.user.is_authenticated)
+        
         access_token = request.COOKIES.get('access_token')
         refresh_token = request.COOKIES.get('refresh_token')
-        return self.are_tokens_valid(access_token, refresh_token) \
-                    or bool(request.user and request.user.is_authenticated)
+        return self.are_tokens_valid(access_token, refresh_token) and user_exists
     
     def are_tokens_valid(self, access_token, refresh_token):
         if not access_token or not refresh_token:
