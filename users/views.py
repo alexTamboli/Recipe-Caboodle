@@ -25,12 +25,12 @@ class UserRegisterationAPIView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data
-        serializer = serializers.CustomUserSerializer(user)
+        user = serializer.save()
         
         token = RefreshToken.for_user(user)
         refresh_token = str(token)
         access_token = str(token.access_token)
+        
         data = serializer.data
         data['tokens'] = {
             'refresh': refresh_token,
@@ -69,6 +69,7 @@ class UserLoginAPIView(GenericAPIView):
         token = RefreshToken.for_user(user)
         refresh_token = str(token)
         access_token = str(token.access_token)
+        
         data = serializer.data
         data['tokens'] = {
             'refresh': refresh_token,
