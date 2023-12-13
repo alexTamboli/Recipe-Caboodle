@@ -11,10 +11,22 @@ class RecipeListAPIView(generics.ListAPIView):
     """
     Get: a collection of recipes
     """
-    queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (AllowAny,)
-    filterset_fields = ('category__name', 'author__username')
+    filterset_fields = ('category__name', 'author__username', 'bookmarked_by__user__username')
+    
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        if 'bookmarked_by__user__username' in self.request.query_params:
+            queryset = queryset.prefetch_related('bookmarked_by__user')
+
+        limit = self.request.query_params.get('limit')
+        if limit and limit.isdigit():
+            limit = int(limit)
+            if limit > 0:
+                queryset = queryset[:limit]
+            
+        return queryset 
     
     
 class RecipeCreateAPIView(generics.CreateAPIView):
