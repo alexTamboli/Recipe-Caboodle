@@ -45,9 +45,14 @@ class ProfileSerializer(CustomUserSerializer):
     """
     Serializer class to serialize the user Profile model
     """
+    liked_recipes = serializers.SerializerMethodField()
+    
+    def get_liked_recipes(self, profile):
+        return profile.user.recipelike_set.values_list('recipe__id', flat=True)
+    
     class Meta:
         model = Profile
-        fields = ('bookmarks', 'bio')
+        fields = ('bio', 'bookmarks', 'liked_recipes')
 
 
 class ProfileAvatarSerializer(serializers.ModelSerializer):
