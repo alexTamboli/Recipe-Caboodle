@@ -144,11 +144,14 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Recipe Caboodle API',
     'DESCRIPTION': 'A recipe sharing platform built using DRF',
     'VERSION': '1.0.0',
+    'DISABLE_ERRORS_AND_WARNINGS': True,
 }
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
