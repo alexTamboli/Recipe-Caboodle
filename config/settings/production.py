@@ -5,12 +5,20 @@ ALLOWED_HOSTS = ['recipe-caboodle-backend-server.onrender.com']
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "jovial-strudel-706543.netlify.app",
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://jovial-strudel-706543.netlify.app',
+    'jovial-strudel-706543.netlify.app',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = (
+    'access-control-allow-credentials',
+    'access-control-allow-headers',
+    'access-control-allow-methods',
+    'access-control-allow-origin',
+    'content-type',
+)
 
 INSTALLED_APPS += [
     'cloudinary_storage',
