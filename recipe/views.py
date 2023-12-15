@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, filters
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -14,6 +14,8 @@ class RecipeListAPIView(generics.ListAPIView):
     serializer_class = RecipeSerializer
     permission_classes = (AllowAny,)
     filterset_fields = ('category__name', 'author__username', 'bookmarked_by__user__username')
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'desc', 'ingredients', 'procedure', 'author__username', 'category__name']
     
     def get_queryset(self):
         queryset = Recipe.objects.all()
