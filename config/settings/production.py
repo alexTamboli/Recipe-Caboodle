@@ -12,13 +12,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_HEADERS = (
-#     'access-control-allow-credentials',
-#     'access-control-allow-headers',
-#     'access-control-allow-methods',
-#     'access-control-allow-origin',
-#     'content-type',
-# )
 
 INSTALLED_APPS += [
     'cloudinary_storage',
