@@ -39,6 +39,10 @@ class UserLoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError('Incorrect Credentials')
+    
+    
+class UserLogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
 
 
 class ProfileSerializer(CustomUserSerializer):
