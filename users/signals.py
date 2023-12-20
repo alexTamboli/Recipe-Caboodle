@@ -9,9 +9,7 @@ from django_rest_passwordreset.signals import reset_password_token_created
 
 from .models import Profile
 
-
 User = get_user_model()
-
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
@@ -22,16 +20,6 @@ def create_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
     instance.profile.save()
-
-# @receiver(post_save, sender=User)
-# def create_or_save_profile(sender, instance, created, **kwargs):
-#     if created:
-#         print("Signal hit: New user created, creating new profile")
-#         Profile.objects.create(user=instance)
-#     else:
-#         print("Signal hit: New user not created its updated, updating profile")
-#         instance.profile.save()
-
 
 # Password reset
 @receiver(reset_password_token_created)

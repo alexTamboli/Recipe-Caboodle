@@ -13,14 +13,22 @@ class RecipeListAPIView(generics.ListAPIView):
     """
     serializer_class = RecipeSerializer
     permission_classes = (AllowAny,)
-    filterset_fields = ('category__name', 'author__username', 'bookmarked_by__user__username')
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'desc', 'ingredients', 'procedure', 'author__username', 'category__name']
+    filterset_fields = ('category__name', 'author__username', 'bookmarked_by__user__username')
     
     def get_queryset(self):
         queryset = Recipe.objects.all()
-        if 'bookmarked_by__user__username' in self.request.query_params:
-            queryset = queryset.prefetch_related('bookmarked_by__user')
+            
+        bookmarked_username = self.request.query_params.get('bookmarked_by__user__username')
+        if bookmarked_username:
+            queryset = queryset \
+                                .filter(bookmarked_by__user__username=bookmarked_username) \
+                                .prefetch_related('bookmarked_by__user')
+            
+        author_username = self.request.query_params.get('author__username')
+        if author_username:
+            queryset = queryset.filter(author__username=author_username)
 
         limit = self.request.query_params.get('limit')
         if limit and limit.isdigit():
