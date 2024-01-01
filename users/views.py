@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 
 from recipe.models import Recipe
 from .models import Profile
-from recipe.serializers import RecipeSerializer
 from . import serializers
 
 
@@ -112,7 +111,7 @@ class UserBookmarkAPIView(ListCreateAPIView):
     """
     Get, Create, Delete favorite recipe
     """
-    serializer_class = RecipeSerializer
+    serializer_class = serializers.RecipeIdSerializer
     permission_classes = (IsAuthenticated,)
     profile = Profile.objects.all()
 
