@@ -96,3 +96,6 @@ class PasswordChangeSerializer(serializers.Serializer):
         instance.set_password(validated_data['new_password'])
         instance.save()
         return instance
+
+class RecipeIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField()

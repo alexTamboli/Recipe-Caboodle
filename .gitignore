@@ -160,3 +160,4 @@ cython_debug/
 #custom
 static/
 staticfiles_build/
+.env
