@@ -121,21 +121,20 @@ class UserBookmarkAPIView(ListCreateAPIView):
         user_profile = get_object_or_404(self.profile, user=user)
         return user_profile.bookmarks.all()
 
-    def post(self, request, pk):
-        user = User.objects.get(id=pk)
-        user_profile = get_object_or_404(self.profile, user=user)
-        recipe = Recipe.objects.get(id=request.data['id'])
-        if user_profile:
-            user_profile.bookmarks.add(recipe)
+    def get(self, request):
+        return Response("Hii", status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        if request.user.profile:
+            recipe = get_object_or_404(Recipe, id=request.data['id']) 
+            request.user.profile.bookmarks.add(recipe)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
-        user = User.objects.get(id=pk)
-        user_profile = get_object_or_404(self.profile, user=user)
+    def delete(self, request):
         recipe = Recipe.objects.get(id=request.data['id'])
-        if user_profile:
-            user_profile.bookmarks.remove(recipe)
+        if request.user.profile:
+            request.user.profile.bookmarks.remove(recipe)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
