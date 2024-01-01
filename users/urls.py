@@ -40,7 +40,7 @@ urlpatterns = [
          name='user-profile'),
     path('profile/avatar/', views.UserAvatarAPIView.as_view(),
          name='user-avatar'),
-    path('profile/<int:pk>/bookmarks/', views.UserBookmarkAPIView.as_view(),
+    path('profile/bookmarks/', views.UserBookmarkAPIView.as_view(),
          name='user-bookmark'),
     path('password/change/', views.PasswordChangeAPIView.as_view(),
          name='change-password'),
