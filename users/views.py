@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateAPIView, UpdateAPIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, RetrieveUpdateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -130,12 +130,25 @@ class UserBookmarkAPIView(ListCreateAPIView):
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
-        recipe = Recipe.objects.get(id=request.data['id'])
-        if request.user.profile:
-            request.user.profile.bookmarks.remove(recipe)
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    # def delete(self, request):
+    #     recipe = Recipe.objects.get(id=request.data['id'])
+    #     if request.user.profile:
+    #         request.user.profile.bookmarks.remove(recipe)
+    #         return Response(status=status.HTTP_200_OK)
+    #     return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+class UserBookmarkDeleteAPIView(DestroyAPIView):
+    """
+    Delete favorite recipe
+    """
+    serializer_class = serializers.RecipeIdSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Recipe.objects.all()  # Set the queryset to all recipes
+
+    def perform_destroy(self, instance):
+        # Remove the recipe from the user's bookmarks
+        if self.request.user.profile:
+            self.request.user.profile.bookmarks.remove(instance)
 
 
 class PasswordChangeAPIView(UpdateAPIView):
