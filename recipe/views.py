@@ -10,7 +10,7 @@ from .permissions import IsAuthorOrReadOnly
 class RecipeListAPIView(generics.ListAPIView):
     """
     Get: a collection of recipes
-    """
+    """ 
     serializer_class = RecipeSerializer
     permission_classes = (AllowAny,)
     filter_backends = [filters.SearchFilter]
